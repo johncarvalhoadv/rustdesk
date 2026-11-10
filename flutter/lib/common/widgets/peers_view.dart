@@ -293,7 +293,10 @@ class _PeersViewState extends State<_PeersView>
 
             if (updateEvent == UpdateEvent.load) {
               _curPeers.clear();
-              _curPeers.addAll(peers.map((e) => e.id));
+              final peersToQuery = widget.peerTabIndex == PeerTabIndex.group
+                  ? widget.peers.peers
+                  : peers;
+              _curPeers.addAll(peersToQuery.map((e) => e.id));
               _queryOnlines(true);
             }
             return child;
@@ -568,6 +571,9 @@ class MyGroupPeerView extends BasePeersView {
         );
 
   static bool filter(Peer peer) {
+    if (!peer.online) {
+      return false;
+    }
     final model = gFFI.groupModel;
     if (model.searchAccessibleItemNameText.isNotEmpty) {
       final text = model.searchAccessibleItemNameText.value.toLowerCase();
